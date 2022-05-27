@@ -3,9 +3,7 @@ const modelId = {
   produto: '241856',
   usuario: '241854',
 };
-const {
-  modelResponseProduct, modelResponseUser, modelResponseError,
-} = require('../../util');
+const { modelResponseProduct, modelResponseUser, modelResponseError } = require('../../util');
 
 require('dotenv').config();
 
