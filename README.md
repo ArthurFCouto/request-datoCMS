@@ -26,7 +26,7 @@ Seguem as configurações neessárias para visualizar a aplicação em sua máqu
 
 -  [Git](https://git-scm.com);
 -  [Node](https://nodejs.org/);
--  [Yarn](https://yarnpkg.com/);
+-  [NPM]();
 
 ### Clonando o repositório
 1. Pelo terminal, acesse o diretório em que deseja ter o repositório clonado e execute o comando a seguir.
