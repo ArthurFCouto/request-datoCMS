@@ -1,7 +1,7 @@
 const assert = require('assert');
 const datoService = require('../src/service/datoservice');
 
-const MOCHA_EXPECTED = {
+const PRODUCT_EXPECTED = {
   id: '14559086',
   barcode: 'https://api.cosmos.bluesoft.com.br/products/barcode/D215D0FAC1ACAEF6B65EE7ED9820DD38.png',
   codigo: '7891910000197',
@@ -9,17 +9,26 @@ const MOCHA_EXPECTED = {
   imagem: 'https://cdn-cosmos.bluesoft.com.br/products/7891910000197',
   precoMedio: 5.890000000000001,
 };
-
-const MOCHA_LIST_EXPECTED = expected = {
-  atualPagina: 1,
-  porPagina: 6,
-  totalPagina: 1,
-  totalProduto: 6,
-  listaProduto: [],
+const LIST_PRODUCT_EXPECTED = ['atualPagina', 'porPagina', 'totalPagina', 'totalProduto', 'listaProduto'];
+const PRODUCT_NOT_FOUND = {
+  details: {
+    data: 'O recurso solicitado não existe',
+    status: 404,
+    statusText: 'Not Found'
+  },
+  error: 'Ops! Ocorreu um erro durante a exclusão do produto'
+};
+const USER_EXPECTED = {
+  nome: 'Arthur Couto',
+  email: 'arthur@gmail.com',
+  telefone: '38999414205',
+  senha: '12345678',
 };
 
-describe('Dato Service', () => {
-  it('Cadastra um produto na api DatoCMS (Já cadastrado)', async () => {
+describe('Dato Service testing', function () {
+  this.timeout(10000);
+
+  it('Verificando a validação no cadastro de um produto já cadastrado', async () => {
     const expected = {
       details: {
         data: [
@@ -34,62 +43,33 @@ describe('Dato Service', () => {
       },
       error: 'Ops! Ocorreu um erro durante o cadastro do produto',
     };
-    const result = await datoService.createProduct(MOCHA_EXPECTED).catch((error) => error);
+    const result = await datoService.createProduct(PRODUCT_EXPECTED).catch((error) => error);
     assert.deepEqual(result, expected);
-  }).timeout(10000);
+  });
 
-  it('Busca um produto na api DatoCMS pelo código', async () => {
-    const result = await datoService.getProductByCode(7891910000197).catch((error) => error);
-    assert.deepEqual(result, MOCHA_EXPECTED);
-  }).timeout(10000);
+  it('Verificando o método de busca pelo código', async () => {
+    const result = await datoService.getProductByCode(PRODUCT_EXPECTED.codigo).catch((error) => error);
+    assert.deepEqual(result, PRODUCT_EXPECTED);
+  });
 
-  it('Busca uma lista na api DatoCMS pela descrição', async () => {
-    const expected = {
-      atualPagina: 1,
-      porPagina: 1,
-      totalPagina: 1,
-      totalProduto: 1,
-      listaProduto: [
-        {
-          id: '14266485',
-          barcode: '',
-          codigo: '7891032014362',
-          descricao: 'AZEITONA VERDE OLE FATIADA 130G',
-          imagem: 'https://cdn-cosmos.bluesoft.com.br/products/7891032014362',
-          precoMedio: '6.425000000000001',
-        },
-      ],
-    };
-    const result = await datoService.getProductByDescription('AZEITONA VERDE OLE').catch((error) => error);
-    assert.deepEqual(result, expected);
-  }).timeout(10000);
+  it('Verificando o método de busca pela descrição', async () => {
+    const result = await datoService.getProductByDescription(PRODUCT_EXPECTED.descricao).catch((error) => error);
+    const { listaProduto } = result;
+    assert.deepEqual(listaProduto[0], PRODUCT_EXPECTED);
+  });
 
-  it('Busca todos os produtos cadastrados da api DatoCMS', async () => {
+  it('Verificando o método de listagem de todos os produtos', async () => {
     const result = await datoService.getAllProduct().catch((error) => error);
-    const resultCompare = {...result, listaProduto: []};
-    assert.deepEqual(resultCompare, MOCHA_LIST_EXPECTED);
-  }).timeout(10000);
+    const resultCompare = Object.keys(result);
+    assert.deepEqual(resultCompare, LIST_PRODUCT_EXPECTED);
+  });
 
-  it('Exclui um produto na api DatoCMS pelo id', async () => {
-    const expected = {
-      details: {
-        data: 'O recurso solicitado não existe',
-        status: 404,
-        statusText: 'Not Found'
-      },
-      error: 'Ops! Ocorreu um erro durante a exclusão do produto'
-    }
-    const result = await datoService.destroy(123).catch((error) => error);
-    assert.deepEqual(result, expected);
-  }).timeout(10000);
+  it('Verificando a resposta default para um erro', async () => {
+    const result = await datoService.destroy().catch((error) => error);
+    assert.deepEqual(result, PRODUCT_NOT_FOUND);
+  });
 
-  it('Cria um usuario na base DatoCMS', async () => {
-    const user = {
-      nome: 'Arthur Couto',
-      email: 'arthur@gmail.com',
-      telefone: '38999414205',
-      senha: '12345678',
-    };
+  it('Verificando a validação no cadastro de um usuário já cadastrado', async () => {
     const expected = {
       details: {
         data: [
@@ -104,7 +84,7 @@ describe('Dato Service', () => {
       },
       error: 'Ops! Ocorreu um erro durante a criação do usuário',
     };
-    const result = await datoService.createUser(user).catch((error) => error);
+    const result = await datoService.createUser(USER_EXPECTED).catch((error) => error);
     assert.deepEqual(result, expected);
-  }).timeout(10000);
+  });
 });

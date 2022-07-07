@@ -30,6 +30,17 @@ function modelResponseProduct(product) {
   };
 }
 
+function modelResponseProductList(list) {
+  const listaProduto = list.map((item) => modelResponseProduct(item));
+  return {
+    atualPagina: 1,
+    porPagina: listaProduto.length,
+    totalPagina: 1,
+    totalProduto: listaProduto.length,
+    listaProduto,
+  };
+}
+
 function modelResponseUser(user) {
   const {
     id, email_usuario, nome_usuario, imagem_usuario, senha_usuario, telefone_usuario,
@@ -94,17 +105,6 @@ function modelResponseError(message, error) {
   return new Promise((resolve, reject) => {
     reject(response);
   });
-}
-
-function modelResponseProductList(list) {
-  const listaProduto = list.map((item) => modelResponseProduct(item));
-  return {
-    atualPagina: 1,
-    porPagina: listaProduto.length,
-    totalPagina: 1,
-    totalProduto: listaProduto.length,
-    listaProduto,
-  };
 }
 
 module.exports = {
